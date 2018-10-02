@@ -4,6 +4,8 @@ A companion app for Presto - Toronto's transit payment system.
 
 Available on the App Store and Google Play soon.
 
+Designed and developed by Matthew Tory with Flutter.
+
 ## Getting Started
 
 Test username: test
