@@ -1,8 +1,14 @@
-# presto
+# Presto Companion
 
-A new Flutter project.
+A companion app for Presto - Toronto's transit payment system.
+
+Available on the App Store and Google Play soon.
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Test username: test
+
+Test password: test
+
+![](https://thumbs.gfycat.com/NecessaryMediumItalianbrownbear-size_restricted.gif)
+![](https://thumbs.gfycat.com/LikelyOffbeatAfricanparadiseflycatcher-size_restricted.gif)
