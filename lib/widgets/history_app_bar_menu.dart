@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
-import 'package:presto/widgets/app_bar_menu.dart';
 import 'package:presto/blocs/auth_bloc_provider.dart';
 import 'package:presto/models/card_transaction_model.dart';
 import 'package:presto/constants.dart' as constants;
@@ -34,9 +33,12 @@ class _HistoryAppBarMenuState extends State<HistoryAppBarMenu> {
           transactionsOnMonths
               .forEach((month, transactions) => transactions.sort((a, b) => a.date.isBefore(b.date) ? 1 : -1));
 
+          List<DateTime> months = transactionsOnMonths.keys.toList();
+          months.sort((a, b) => a.isBefore(b) ? 1 : -1);
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: transactionsOnMonths.keys.map((month) {
+            children: months.map((month) {
               return StickyHeader(
                 header: Container(
                   height: 50.0,
@@ -71,6 +73,7 @@ class _HistoryAppBarMenuState extends State<HistoryAppBarMenu> {
       children: <Widget>[
         Text(
           transaction.location,
+          overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.body2.copyWith(fontSize: 16.0),
         ),
         Divider(
@@ -110,8 +113,11 @@ class _HistoryAppBarMenuState extends State<HistoryAppBarMenu> {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              locationColumn,
-              Expanded(child: balanceColumn),
+              Expanded(child: locationColumn),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: balanceColumn,
+              ),
             ],
           ),
           Divider(),
