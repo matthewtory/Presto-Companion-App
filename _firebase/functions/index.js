@@ -139,7 +139,7 @@ function fetchCardInfo(axiosInstance, card) {
 function fetchCardActivity(axiosInstance, from) {
     const prestoCard = getAPIWrapperWithAxiosInstance(axiosInstance);
 
-    return prestoCard.getActivityByDateRange.call(axiosInstance, '1970-01-01', Date.now()).then((history) => {
+    return prestoCard.getActivityByDateRange.call(axiosInstance, from, Date.now()).then((history) => {
         history = history.map((historyItem) => {
             historyItem.date = moment.tz(historyItem.date, 'M/D/YYYY h:mm:ss a', "America/Toronto").utc();
             console.log('moment: ', historyItem.date);
@@ -166,7 +166,7 @@ function storeCardInfoDoesExist(axiosInstance, doc, cardInfo, uid) {
     const cardDocument = getCardInfoDocument(cardInfo, uid);
 
     return doc.ref.update(cardDocument).then((writeResult) => {
-        let latestDate = doc.get('latest_date');
+        let latestDate = doc.get('latest_date').toDate();
         
         return fetchCardActivity(axiosInstance, latestDate);
     }).then((history) => {
