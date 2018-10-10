@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 import 'package:url_launcher/url_launcher.dart' as url;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:presto/blocs/auth_bloc_provider.dart';
 import 'package:presto/blocs/auth_bloc.dart';
@@ -18,16 +20,61 @@ class MainPage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MainPage> {
+class _MyHomePageState extends State<MainPage> with SingleTickerProviderStateMixin {
+  bool updating = true;
+  String updateMessage;
 
+  StreamSubscription<DocumentSnapshot> updateCardsSubscription;
 
+  AnimationController balanceController;
+  Animation<double> balanceAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    AuthBloc.updateCards();
+    AuthBloc.updateCards().then((stream) {
+      if (updateCardsSubscription != null) {
+        updateCardsSubscription.cancel();
+      }
+
+      updateCardsSubscription = stream.listen(_onUpdateCardStatusReceived);
+    });
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
+    balanceController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    balanceController.forward();
+    balanceAnimation = CurvedAnimation(parent: Tween<double>(begin: 0.1, end: 1.0).animate(balanceController), curve: Curves.easeOut, reverseCurve: Curves.easeIn);
+    balanceController.addStatusListener((status) {
+      if (updating) {
+        switch (status) {
+          case (AnimationStatus.completed):
+            balanceController.reverse();
+            break;
+          case (AnimationStatus.dismissed):
+            balanceController.forward();
+            break;
+          default:
+        }
+      } else {
+        balanceController.forward();
+      }
+    });
+  }
+
+  void _onUpdateCardStatusReceived(DocumentSnapshot snapshot) {
+    if (snapshot['success'] != null) {
+      bool success = snapshot['success'];
+
+      if (!success) {
+        updateMessage = snapshot['message'] ?? 'Error Updating Card';
+      } else {
+        updateMessage = null;
+      }
+      setState(() {
+        updating = false;
+      });
+    }
   }
 
   @override
@@ -53,6 +100,14 @@ class _MyHomePageState extends State<MainPage> {
   }
 
   Widget _buildCardPage(BuildContext context, CardModel selectedCard) {
+    String statusText;
+
+    if (updating) {
+      statusText = 'Updating Card...';
+    } else {
+      statusText = updateMessage ?? 'As of ${utils.dateToShortStringWithTime(selectedCard.lastUpdatedOn)}';
+    }
+
     return SafeArea(
       key: ValueKey<String>(selectedCard.number),
       child: Padding(
@@ -98,9 +153,18 @@ class _MyHomePageState extends State<MainPage> {
                   DefaultTextStyle(
                     style: Theme.of(context).textTheme.display4,
                     child: Center(
-                      child: new Text(
-                        '${selectedCard.balance}',
-                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 85.0),
+                      child: AnimatedBuilder(
+                        animation: balanceController,
+                        builder: (context, widget) {
+                          return Opacity(
+                            opacity: balanceController.value,
+                            child: widget,
+                          );
+                        },
+                        child: Text(
+                          '${selectedCard.balance}',
+                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 85.0),
+                        ),
                       ),
                     ),
                   ),
@@ -108,7 +172,7 @@ class _MyHomePageState extends State<MainPage> {
                   Opacity(
                       opacity: 0.6,
                       child: Text(
-                        'As of ${utils.dateToShortStringWithTime(selectedCard.lastUpdatedOn)}',
+                        statusText,
                         textAlign: TextAlign.center,
                       )),
                 ],
@@ -164,5 +228,11 @@ class _MyHomePageState extends State<MainPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    updateCardsSubscription.cancel();
+    super.dispose();
   }
 }
