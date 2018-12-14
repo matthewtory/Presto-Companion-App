@@ -11,17 +11,19 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^0.17.0",
+    "firebase-admin": "~6.0.0",
+    "firebase-functions": "^2.1.0",
     "axios": "^0.18.0",
     "axios-cookiejar-support": "^0.4.2",
-    "firebase-admin": "~6.0.0",
-    "firebase-functions": "^2.0.3",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
-    "presto-card-js-isomorphic": "^5.0.1"
+    "presto-card-js-isomorphic": "file:./presto-card-js-isomorphic"
   },
   "devDependencies": {
-    "eslint": "^4.12.0",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^5.9.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-react": "^7.11.1"
   },
   "private": true
 }

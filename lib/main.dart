@@ -29,7 +29,8 @@ class MyApp extends StatelessWidget {
     return AuthBlocProvider(
       bloc: authBloc,
       child: new MaterialApp(
-        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        title: 'Presto Companion',
         theme: new ThemeData(
             brightness: Brightness.light,
             primarySwatch: Colors.green,

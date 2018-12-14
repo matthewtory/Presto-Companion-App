@@ -32,6 +32,10 @@ exports.handleRequest = functions.firestore.document('requests/{request}').onCre
             return snapshot.ref.update({success: true});
         }).catch((reason) => {
             console.log('failed', reason.message, reason.stack);
+            let message = reason.message;
+            if(message.includes('RequestVerificationToken')) {
+                message = 'Presto service unavailable. Check back soon.';
+            }
             return snapshot.ref.update({success: false, message: reason.message});
         });
     } else if(snapshot.get('request') === 'login') {
@@ -41,8 +45,11 @@ exports.handleRequest = functions.firestore.document('requests/{request}').onCre
             console.log('login response: ', response);
             return snapshot.ref.update({success: response});
         }).catch((reason) => {
-            console.log('failure:', reason.message);
-            return snapshot.ref.update({success: false, message: reason.message});
+            let message = reason.message;
+            if(message.includes('RequestVerificationToken')) {
+                message = 'Presto service unavailable. Check back soon.';
+            }
+            return snapshot.ref.update({success: false, message: message});
         });
     }
 

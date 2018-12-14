@@ -132,9 +132,9 @@ class _MyHomePageState extends State<MainPage> with SingleTickerProviderStateMix
                 borderRadius: BorderRadius.all(Radius.circular(18.0)),
               ),
               child: Stack(
-                fit: StackFit.loose,
+                fit: StackFit.passthrough,
                 children: <Widget>[
-                  Image.asset("assets/presto-card.png"),
+                  Image.asset("assets/presto-card.png", fit: BoxFit.cover,),
                   Positioned(
                       left: 16.0,
                       bottom: 16.0,

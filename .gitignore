@@ -36,6 +36,8 @@ build/
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/android/app/google-services.json
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -81,3 +83,4 @@ build/
 **/.firebaserc
 **/firebase.json
 **/.eslintrc.json
+**/_firebase.bak
