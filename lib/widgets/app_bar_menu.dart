@@ -137,7 +137,7 @@ class _AppBarMenuState extends State<AppBarMenu> with SingleTickerProviderStateM
     return CustomScrollView(
       reverse: false,
       controller: _scrollController,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: BouncingScrollPhysics(),
       slivers: <Widget>[
         SliverFlexibleBox(
           key: _boxAdapterKey,
